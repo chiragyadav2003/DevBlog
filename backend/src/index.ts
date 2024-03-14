@@ -1,42 +1,38 @@
 import { Hono } from 'hono'
-import { PrismaClient } from '@prisma/client/edge'
-import { withAccelerate } from '@prisma/extension-accelerate'
-import { HTTPException } from 'hono/http-exception'
-import { decode, sign, verify } from 'hono/jwt'
-import { passwordHashing } from './utils/hashing'
+import { userRouter } from './routes/user'
+import { blogRouter } from './routes/blog'
 
 
-//hono type is generic of ENV type which accepsts Bindings and Variables
-//we can specify all of our environment variables here
 const app = new Hono<{
       Bindings:{
         DATABASE_URL:string,
         JWT_SECRET:string
+      },
+      Variables : {
+        userId: string
       }}
 >()
 
-//** adding auth middleware on routes for get,post,put request i.e, for blog requests */
-app.use('/api/v1/blog/*', async(c,next)=>{
-  const header = c.req.header("authorization")||"";
 
-  //remove "Bearer " from token
-  const token = header.replace("Bearer ", "")
+//* adding routes for user and blog requests
+app.route("/api/v1/user",userRouter)
 
-  const response = await verify(token, c.env.JWT_SECRET)
-  if(!response?.id){
-    c.status(403)
-    return c.json({error:"unauthorized request"})
-  }
-  await next()
-})
+app.route("/api/v1/blog",blogRouter)
 
-app.get('/api/v1/', (c) => {
+export default app
 
-  //NOTE: here DATABASE_URL accessed from wrangler.toml file
-  // const { DATABASE_URL } = env<{ DATABASE_URL: string }>(c)
-  // const prisma = new PrismaClient({
-  //     datasourceUrl: DATABASE_URL,
-  // }).$extends(withAccelerate())
+/*
+  app.get('/api/v1', (c) => {
+
+  /*
+  NOTE: here DATABASE_URL accessed from wrangler.toml file
+  import file -  import { HTTPException } from 'hono/http-exception'
+  
+  const { DATABASE_URL } = env<{ DATABASE_URL: string }>(c)
+  const prisma = new PrismaClient({
+      datasourceUrl: DATABASE_URL,
+  }).$extends(withAccelerate())
+  
 
   const prisma = new PrismaClient({
       datasourceUrl: c.env.DATABASE_URL,
@@ -44,109 +40,4 @@ app.get('/api/v1/', (c) => {
 
     return c.text('Hello Hono!')
 })
-
-app.post("/api/v1/user/signup", async(c)=>{
-
-  const prisma = new PrismaClient({
-    datasourceUrl: c.env?.DATABASE_URL,
-  }).$extends(withAccelerate())
-
-  const body = await c.req.json()
-
-  //TODO: Add zod validation
-  try {
-      //NOTE: here we are not required to check if user exist for this email or not as we have already made our email field to be unique
-      /* 
-        //* check if user exist or not
-        const check = await prisma.user.findFirst({
-          where:{email:body.email}
-        })
-      
-        if(check?.id){
-          c.status(403)
-          return c.json({error:"user already exist for this email"})
-        }
-      */
-      
-      const hashedPassword = await passwordHashing(body.password)
-      const res = await prisma.user.create({
-        data:{
-          email:body.email,
-          password:hashedPassword
-        }
-      })
-      console.log(res)
-    
-      //generate token
-      const payload = {
-        userId:res.id
-      }
-      const token = await sign(payload,c.env.JWT_SECRET)
-      console.log(token)
-    
-      return c.json({jwt:token})
-  } catch (error) {
-      c.status(404)
-      return c.json({
-        message:"signup error",
-        error:error
-      })
-  }
-})
-
-app.post("/api/v1/user/signin", async(c)=>{
-
-  const prisma = new PrismaClient({
-    datasourceUrl: c.env?.DATABASE_URL,
-  }).$extends(withAccelerate())
-
-  const body = await c.req.json()
-
-  try {
-    const hashedPassword = await passwordHashing(body.password)
-    const user = await prisma.user.findUnique({
-      where:{email:body.email,password:hashedPassword}
-    })
-
-    if(!user?.id){
-      c.status(403)
-      return c.json({error:"user does not exist"})
-    }
-
-    //generate token
-    const payload = {
-      userId:user.id
-    }
-    const token = await sign(payload,c.env.JWT_SECRET)
-    console.log(token)
-  
-    return c.json({jwt:token})
-  } catch (error) {
-    c.status(404)
-      return c.json({
-        error:"signup error",
-        "msg":error
-      })
-  }
-})
-
-app.post("/api/v1/blog", (c)=>{
-  return c.text('blog!')
-})
-
-app.put("/api/v1/blog", (c)=>{
-  return c.text('blog update route')
-})
-
-
-app.get("/api/v1/blog/:id", (c)=>{
-  const id = c.req.param('id')
-  console.log(id)
-  return c.text('get blog route!')
-})
-
-app.get("/api/v1/blog/bulk", (c)=>{
-  return c.text('signin route - get all blogs')
-})
-
-export default app
+*/
