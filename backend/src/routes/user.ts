@@ -61,7 +61,7 @@ userRouter.post("/signup", async(c)=>{
         
         return c.json({jwt:token})
     } catch (error) {
-        c.status(404)
+        c.status(409)
         return c.json({
             message:"signup error",
             error:error
@@ -90,7 +90,7 @@ userRouter.post("/signin", async(c)=>{
         })
 
         if(!user?.id){
-        c.status(403)
+        c.status(401)
         return c.json({error:"user does not exist"})
         }
 
@@ -103,9 +103,9 @@ userRouter.post("/signin", async(c)=>{
 
         return c.json({jwt:token})
     } catch (error) {
-        c.status(404)
+        c.status(401)
         return c.json({
-            error:"signup error",
+            error:"signin error",
             "msg":error
         })
     }

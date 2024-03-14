@@ -20,7 +20,7 @@ export const blogRouter = new Hono<{
 >()
 
 //* adding auth middleware on routes for all type of blog requests */
-blogRouter.use('*', async(c,next)=>{
+blogRouter.use('/*', async(c,next)=>{
     const header = c.req.header("Authorization")||"";
 
     if(!header){
@@ -32,44 +32,120 @@ blogRouter.use('*', async(c,next)=>{
     const token = header.replace("Bearer ", "")
 
     const response = await verify(token, c.env.JWT_SECRET)
-    if(!response?.id){
+
+    if(!response?.userId){
         c.status(403)
         return c.json({error:"unauthorized request"})
     }
-    //if all goes well, set userId in request
-    c.set('userId', response.id)
+    //if all goes well,extract userId and set userId in request
+    c.set('userId', response.userId)
     await next()
 })
 
-blogRouter.post("/", (c)=>{
+blogRouter.post("/", async(c)=>{
     const prisma = new PrismaClient({
         datasourceUrl: c.env?.DATABASE_URL,
     }).$extends(withAccelerate())
-    return c.text('blog!')
+
+    const body = await c.req.json()
+    const userId = c.get('userId')
+    
+
+    try {
+        const post = await prisma.post.create({
+            data:{
+                title:body.title,
+                content:body.content,
+                authorId:userId
+            }
+        })
+
+        return c.json({
+            id:post.id,
+            message:"blog created successfully"
+        })
+    } catch (error) {
+        c.status(422)
+        return c.json({
+            message:"blog post request error - creation failed",
+            error:error
+        })
+    }
+
 })
 
-blogRouter.put("/", (c)=>{
+blogRouter.put("/", async(c)=>{
     const prisma = new PrismaClient({
         datasourceUrl: c.env?.DATABASE_URL,
     }).$extends(withAccelerate())
-    return c.text('blog update route')
+
+    const body = await c.req.json()
+    const userId = c.get('userId')
+
+    try {
+        const post = await prisma.post.update({
+            where:{
+                id:body.id,
+                authorId:userId
+            },
+            data:{
+                title:body.title,
+                content:body.description,
+            }
+        })
+
+        return c.json({
+            message:"blog updated successfully"
+        })
+    } catch (error) {
+        c.status(411)
+        return c.json({
+            message:"blog put request error - updation failed",
+            error:error
+        })
+    }
 })
 
+//NOTE: here 'bulk' can also act as post id, so it will make call for search for post with id = "bulk", to avoid this conflict we wrote this handler first 
+blogRouter.get("/bulk", async(c)=>{
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env?.DATABASE_URL,
+    }).$extends(withAccelerate())
 
-blogRouter.get("/:id", (c)=>{
+    //TODO: add pagination
+    try {
+        const posts = await prisma.post.findMany({})
+        console.log("posts -",posts)
+
+        return c.json({posts})
+    } catch (error) {
+        c.status(411)
+        return c.json({
+            message:"blog get request error - accessing all posts failed",
+            error:error
+        })
+    }
+})
+
+blogRouter.get("/:id", async(c)=>{
     const prisma = new PrismaClient({
         datasourceUrl: c.env?.DATABASE_URL,
     }).$extends(withAccelerate())
 
     const id = c.req.param('id')
-    console.log(id)
-    return c.text('get blog route!')
+
+    try {
+        const post = await prisma.post.findFirst({
+            where:{ id }
+        })
+
+        return c.json({post:post})
+    } catch (error) {
+        c.status(411)
+        return c.json({
+            message:"blog get request error - accessing single post with postId failed",
+            error:error
+        })
+    }
 })
 
-blogRouter.get("/bulk", (c)=>{
-    const prisma = new PrismaClient({
-        datasourceUrl: c.env?.DATABASE_URL,
-    }).$extends(withAccelerate())
-
-    return c.text('signin route - get all blogs')
-})
