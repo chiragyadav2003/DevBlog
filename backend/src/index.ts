@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
 import { HTTPException } from 'hono/http-exception'
 import { decode, sign, verify } from 'hono/jwt'
+import { passwordHashing } from './utils/hashing'
 
 
 //hono type is generic of ENV type which accepsts Bindings and Variables
@@ -67,10 +68,11 @@ app.post("/api/v1/user/signup", async(c)=>{
         }
       */
       
+      const hashedPassword = await passwordHashing(body.password)
       const res = await prisma.user.create({
         data:{
           email:body.email,
-          password:body.password
+          password:hashedPassword
         }
       })
       console.log(res)
@@ -86,8 +88,8 @@ app.post("/api/v1/user/signup", async(c)=>{
   } catch (error) {
       c.status(404)
       return c.json({
-        error:"signup error",
-        "msg":error
+        message:"signup error",
+        error:error
       })
   }
 })
@@ -101,8 +103,9 @@ app.post("/api/v1/user/signin", async(c)=>{
   const body = await c.req.json()
 
   try {
+    const hashedPassword = await passwordHashing(body.password)
     const user = await prisma.user.findUnique({
-      where:{email:body.email,password:body.password}
+      where:{email:body.email,password:hashedPassword}
     })
 
     if(!user?.id){
@@ -147,17 +150,3 @@ app.get("/api/v1/blog/bulk", (c)=>{
 })
 
 export default app
-
-/*
-  const token = body?.jwt.replace("bearer ","")
-
-    //verify this token
-    const decodedPayload = await verify(token, c.env.JWT_SECRET)
-
-    if(!decodedPayload.id){
-      c.status(403)
-      return c.json({error:"invalid access token"})
-    }
-
-    //check if user exist for this id
-*/
