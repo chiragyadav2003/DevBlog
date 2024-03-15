@@ -14,7 +14,7 @@ export const passwordHashing = async (password: string) => {
         .map(byte => byte.toString(16).padStart(2, '0'))
         .join('');
 
-    console.log("new hashed password ", hashedPassword);
+    // console.log("new hashed password ", hashedPassword);
     return hashedPassword
 }
 

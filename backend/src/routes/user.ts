@@ -3,6 +3,7 @@ import { passwordHashing } from "../utils/hashing"
 import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
 import { sign } from 'hono/jwt'
+import {signupInput,signinInput} from "@devchirag/medium-common"
 
 /*
     NOTE: hono type is generic of ENV type which accepsts Bindings and Variables 
@@ -28,9 +29,18 @@ userRouter.post("/signup", async(c)=>{
 
     const body = await c.req.json()
 
-    //TODO: Add zod validation
+    //*zod  validation
+    const zodResponse = signupInput.safeParse(body)
+    if(!zodResponse.success){
+        c.status(411)
+        return c.json({
+            message:"input validation failed - incorrect input for signup",
+            error:zodResponse.error
+        })
+    }
+
     try {
-        //NOTE: here we are not required to check if user exist for this email or not as we have already made our email field to be unique
+        //*NOTE: here we are not required to check if user exist for this email or not as we have already made our email field to be unique
         /* 
             //* check if user exist or not
             const check = await prisma.user.findFirst({
@@ -48,19 +58,20 @@ userRouter.post("/signup", async(c)=>{
             data:{
             email:body.email,
             password:hashedPassword,
-            name:body.name()
+            name:zodResponse.data.name
             }
         })
-        console.log(res)
+        // console.log("response = ",res)
         
-        //generate token
+
+        //*generate token
         const payload = {
             userId:res.id
         }
         const token = await sign(payload,c.env.JWT_SECRET)
-        console.log("token",token)
+        // console.log("token",token)
         
-        return c.json({jwt:token})
+        return c.json({jwt:token,user:res})
     } catch (error) {
         c.status(409)
         return c.json({
@@ -84,6 +95,17 @@ userRouter.post("/signin", async(c)=>{
 
     const body = await c.req.json()
 
+    //*zod  validation
+    const zodResponse = signinInput.safeParse(body)
+    if(!zodResponse.success){
+        c.status(411)
+        return c.json({
+            message:"input validation failed - incorrect input for signin",
+            error:zodResponse.error
+        })
+    }
+
+
     try {
         const hashedPassword = await passwordHashing(body.password)
         const user = await prisma.user.findUnique({
@@ -95,12 +117,12 @@ userRouter.post("/signin", async(c)=>{
         return c.json({error:"user does not exist"})
         }
 
-        //generate token
+        //*generate token
         const payload = {
         userId:user.id
         }
         const token = await sign(payload,c.env.JWT_SECRET)
-        console.log(token)
+        // console.log(token)
 
         return c.json({jwt:token})
     } catch (error) {

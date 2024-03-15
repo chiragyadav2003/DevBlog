@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { verify } from 'hono/jwt'
 import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
+import {createBlogInput,updateBlogInput} from "@devchirag/medium-common"
 
 /*
     NOTE: hono type is generic of ENV type which accepsts Bindings and Variables 
@@ -56,6 +57,15 @@ blogRouter.post("/", async(c)=>{
 
     const body = await c.req.json()
     const userId = c.get('userId')
+
+    const zodResponse = createBlogInput.safeParse(body)
+    if(!zodResponse.success){
+        c.status(411)
+        return c.json({
+            message:"incorrect input for creating post",
+            error:zodResponse.error
+        })
+    }
     
 
     try {
@@ -69,7 +79,8 @@ blogRouter.post("/", async(c)=>{
 
         return c.json({
             id:post.id,
-            message:"blog created successfully"
+            message:"blog created successfully",
+            post:post
         })
     } catch (error) {
         c.status(422)
@@ -89,6 +100,16 @@ blogRouter.put("/", async(c)=>{
     const body = await c.req.json()
     const userId = c.get('userId')
 
+    //* zod validatiion
+    const zodResponse = updateBlogInput.safeParse(body)
+    if(!zodResponse.success){
+        c.status(411)
+        return c.json({
+            message:"incorrect input for updating post",
+            error:zodResponse.error
+        })
+    }
+
     try {
         const post = await prisma.post.update({
             where:{
@@ -102,7 +123,8 @@ blogRouter.put("/", async(c)=>{
         })
 
         return c.json({
-            message:"blog updated successfully"
+            message:"blog updated successfully",
+            post:post
         })
     } catch (error) {
         c.status(411)
@@ -122,7 +144,7 @@ blogRouter.get("/bulk", async(c)=>{
     //TODO: add pagination
     try {
         const posts = await prisma.post.findMany({})
-        console.log("posts -",posts)
+        // console.log("posts -",posts)
 
         return c.json({posts})
     } catch (error) {
