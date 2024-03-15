@@ -25,21 +25,28 @@ blogRouter.use('/*', async(c,next)=>{
 
     if(!header){
         c.status(403)
-        return c.json({error:"unauthorized request"})
+        return c.json({error:"unauthorized request - invalid header"})
     }
 
     //remove "Bearer " from token
     const token = header.replace("Bearer ", "")
 
-    const response = await verify(token, c.env.JWT_SECRET)
+    try {
+        const response = await verify(token, c.env.JWT_SECRET)
 
-    if(!response?.userId){
+        if(!response?.userId){
+            c.status(403)
+            return c.json({error:"unauthorized request - invalid access token"})
+        }
+        //if all goes well,extract userId and set userId in request
+        c.set('userId', response.userId)
+        await next()
+    } catch (error) {
         c.status(403)
-        return c.json({error:"unauthorized request"})
+        return c.json({error:"unauthenticated request - error while authentication"})
     }
-    //if all goes well,extract userId and set userId in request
-    c.set('userId', response.userId)
-    await next()
+
+    
 })
 
 blogRouter.post("/", async(c)=>{
