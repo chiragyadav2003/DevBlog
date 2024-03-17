@@ -1,6 +1,8 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {SignupType} from "@devchirag/medium-common"
 import { useState } from "react";
+import axios  from "axios"
+import { BACKEND_URL } from "../config";
 
 export const Auth = ({type}:{type:"signup"|"signin"})=>{
 
@@ -9,7 +11,22 @@ export const Auth = ({type}:{type:"signup"|"signin"})=>{
         email:"",
         password:""
     })
-    // console.log(postInputs)
+
+    const navigate = useNavigate()
+
+    async function sendRequest(){
+        try {
+            const res = await axios.post(`${BACKEND_URL}/user/${type==="signup"?"signup":"signin"}`, postInputs)
+            const token = res.data.jwt
+            localStorage.setItem('token',token)
+            navigate("/blogs")
+        } catch (error) {
+            //TODO: alert user at request failed
+            console.log("request sent error :",error)
+        }
+        
+        
+    }
 
     return <div className="h-screen flex flex-col justify-center ">
         {/* {JSON.stringify(postInputs)} */}
@@ -29,12 +46,12 @@ export const Auth = ({type}:{type:"signup"|"signin"})=>{
                     </div>
                 </div>
                 <div className="pt-8">
-                    <LabelledInput 
+                    {type==="signup"?<LabelledInput 
                         label="Username" 
                         placeholder="Enter your username" 
                         onChange={(e)=>{setPostInputs((prevState)=>({...prevState, name : e.target.value}))}
                         //*destructure prevState and update name here
-                    } /> 
+                    } /> :null}
                     <LabelledInput 
                         label="Email" 
                         placeholder="johndoe@gmail.com" 
@@ -46,7 +63,7 @@ export const Auth = ({type}:{type:"signup"|"signin"})=>{
                         placeholder="Enter your password" 
                         onChange={(e)=>{setPostInputs((prevState)=>({...prevState, password : e.target.value}))}
                     } />
-                    <button type="button" className="w-full text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-base px-5 py-2.5 me-2 mb-2 mt-8">{type==="signup"?"Sign Up":"Sign In"}
+                    <button type="button" onClick={sendRequest} className="w-full text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-base px-5 py-2.5 me-2 mb-2 mt-8">{type==="signup"?"Sign Up":"Sign In"}
                     </button>
 
                 </div>
