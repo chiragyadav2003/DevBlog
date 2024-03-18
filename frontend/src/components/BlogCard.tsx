@@ -1,15 +1,18 @@
+import {Link} from "react-router-dom"
+import {Avatar} from "./Avatar"
 
 interface BlogCardProps{
     authorName:string
     title:string;
     content:string;
     publishedDate:string;
+    id:string
 }
 
-export const BlogCard = ({authorName,title,content,publishedDate}:BlogCardProps)=>{
+export const BlogCard = ({authorName,title,content,publishedDate,id}:BlogCardProps)=>{
     return (
-        <div className="flex flex-col items-center max-w-2xl ">
-            <div className="border-b-2 border-slate-300 text-black p-4">
+            <Link to={`/blog/${id}`}>
+                <div className="border-b-2 border-slate-300 text-black pb-4 w-[250px] sm:w-screen md:max-w-screen-sm lg:max-w-screen-md mt-4 cursor-pointer  ">
                 <div className="flex mb-2 ">
                     <div className="flex items-center justify-center">   
                         <Avatar name={authorName} />
@@ -23,25 +26,19 @@ export const BlogCard = ({authorName,title,content,publishedDate}:BlogCardProps)
                     <div className="flex items-center justify-center text-gray-500 pl-1">
                         {publishedDate}
                     </div>
+                    </div>
+                    <div className="text-2xl font-bold mb-2">
+                        {title}
+                    </div>
+                    <div className="text-md font-thin ">
+                        {content.length>100?`${content.slice(0,100)} ..............`:content}
+                    </div>
+                    <div className="pt-4 text-gray-400 font-thin">
+                        {Math.ceil(content.length/100)} min read
+                    </div>
                 </div>
-                <div className="text-2xl font-bold mb-2">
-                    {title}
-                </div>
-                <div className="text-md font-thin ">
-                    {content.length>100?`${content.slice(0,100)} ..............`:content}
-                </div>
-                <div className="pt-4 text-gray-400 font-thin">
-                    {Math.ceil(content.length/100)} min read
-                </div>
-            </div>
-        </div>
+            </Link>
     )
-}
-
-export function Avatar({name}:{name:string}){
-    return <div className=" flex items-center justify-center w-7 h-7 overflow-hidden bg-gray-100 rounded-full">
-    <span className="font-medium text-gray-600 ">{name[0]}</span>
-</div>
 }
 
 function Circle(){
