@@ -21,10 +21,12 @@ exports.signinInput = zod_1.z.object({
 exports.createBlogInput = zod_1.z.object({
     title: zod_1.z.string(),
     content: zod_1.z.string(),
+    published: zod_1.z.boolean().optional().default(false)
 });
 //*----------------UPDATE BLOG -----------
 exports.updateBlogInput = zod_1.z.object({
     id: zod_1.z.string(),
     title: zod_1.z.string().optional(),
     content: zod_1.z.string().optional(),
+    published: zod_1.z.boolean().optional().default(false)
 });

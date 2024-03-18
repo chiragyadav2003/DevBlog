@@ -73,7 +73,8 @@ blogRouter.post("/", async(c)=>{
             data:{
                 title:body.title,
                 content:body.content,
-                authorId:userId
+                authorId:userId,
+                published:body.published
             }
         })
 
@@ -119,6 +120,7 @@ blogRouter.put("/", async(c)=>{
             data:{
                 title:body.title,
                 content:body.description,
+                published:body.published
             }
         })
 

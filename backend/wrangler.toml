@@ -5,4 +5,4 @@ compatibility_date = "2023-12-01"
 DATABASE_URL=""
 JWT_SECRET=""
 
-#initially we can put our sample JWT_SECRET and DATABASE_URL for development here but when we deploy our worker we can put actual value in the "clouflare-account/workers&pages/<your worker>/setting/variables" and can put actual values there which will be used in final production
+#NOTE:initially we can put our sample JWT_SECRET and DATABASE_URL for development here but when we deploy our worker we can put actual value in the "clouflare-account/workers&pages/<your worker>/setting/variables" and can put actual values there which will be used in final production
