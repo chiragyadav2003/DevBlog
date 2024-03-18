@@ -143,7 +143,18 @@ blogRouter.get("/bulk", async(c)=>{
 
     //TODO: add pagination
     try {
-        const posts = await prisma.post.findMany({})
+        const posts = await prisma.post.findMany({
+            select:{
+                title:true,
+                content:true,
+                id:true,
+                author:{
+                    select:{
+                        name:true
+                    }
+                }
+            }
+        })
         // console.log("posts -",posts)
 
         return c.json({posts})
@@ -165,7 +176,17 @@ blogRouter.get("/:id", async(c)=>{
 
     try {
         const post = await prisma.post.findFirst({
-            where:{ id }
+            where:{ id },
+            select:{
+                title:true,
+                content:true,
+                id:true,
+                author:{
+                    select:{
+                        name:true
+                    }
+                }
+            }
         })
 
         return c.json({post:post})
