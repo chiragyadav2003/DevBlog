@@ -19,13 +19,12 @@ export const Auth = ({type}:{type:"signup"|"signin"})=>{
             const res = await axios.post(`${BACKEND_URL}/user/${type==="signup"?"signup":"signin"}`, postInputs)
             const token = res.data.jwt
             localStorage.setItem('token',token)
+            localStorage.setItem('loggedIn',"true")
             navigate("/blogs")
         } catch (error) {
             //TODO: alert user at request failed
             console.log("request sent error :",error)
         }
-        
-        
     }
 
     return <div className="h-screen flex flex-col justify-center ">
