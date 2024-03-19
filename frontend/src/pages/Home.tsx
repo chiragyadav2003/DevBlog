@@ -83,8 +83,7 @@ export const Home = () =>{
                         </div>
 
                         {
-                            localStorage.getItem("loggedIn")!=="true"?<Visit/>
-                            :null
+                            localStorage.getItem("loggedIn")==="true"?<Visit path={"/blogs"}/>:<Visit path={"/signin"}/>
                         }
 
                         <div className="flex flex-col w-full xl:w-2/5 justify-center lg:items-start">
