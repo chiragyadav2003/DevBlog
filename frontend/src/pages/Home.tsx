@@ -3,7 +3,7 @@ import { Visit } from "../components/Visit"
 
 export const Home = () =>{
     return (
-        <div className="leading-normal tracking-normal text-gray-900 font-sans  ">
+        <div className="leading-normal tracking-normal text-gray-900 font-sans   ">
 
             <div className="h-screen pb-14 bg-right bg-cover background-image:url('bg.svg');">
                 <div className="w-full container mx-auto p-6">
@@ -74,7 +74,7 @@ export const Home = () =>{
                     </div>
 
                     {/* <!--Main--> */}
-                    <div className="container pt-24 md:pt-48 px-6 mx-auto flex flex-wrap flex-col md:flex-row items-center">
+                    <div className="container pt-24 md:pt-48 px-6 mx-auto flex flex-wrap flex-col items-center">
                         
                         {/* <!--Left Col--> */}
                         <div className="flex flex-col w-full xl:w-2/5 justify-center lg:items-start overflow-y-hidden">
@@ -91,12 +91,36 @@ export const Home = () =>{
                         </div>
                         
                         {/* <!--Footer--> */}
-                        <div className="w-full pt-40 pb-6 text-sm text-center md:text-left fade-in">
-                            <a className="text-gray-500 no-underline hover:no-underline" href="/">&copy; DevBlog 2024</a>
-                        </div>
+                        {/* <footer className="flex justify-stretch items-center w-full bg-red-300 mt-20 py-10">
+                            <div className="w-full text-sm text-center fade-in">
+                                <a className="text-gray-500 no-underline hover:no-underline" href="/">&copy; DevBlog 2024</a>
+                            </div>
+                            <div className="flex w-full text-sm  fade-in text-gray-500 no-underline ">
+                                Made with&nbsp;<svg className="hover:scale-150 hover:duration-200" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="#d20f0f" fill-rule="evenodd" d="M12 20c-2.205-.48-9-4.24-9-11a5 5 0 0 1 9-3a5 5 0 0 1 9 3c0 6.76-6.795 10.52-9 11"/></svg>&nbsp;by&nbsp;  
+                                <button 
+                                    onClick={()=>window.location.replace("https://github.com/chiragyadav2003")}
+                                    className="text-gray-500 no-underline hover:no-underline" >
+                                        @Chirag Yadav
+                                    </button>
+                            </div>
+                        </footer> */}
                     </div>
                 </div>
+                
             </div>
+            <footer className="flex justify-stretch items-center w-full pb-10">
+                <div className="w-full text-sm text-center fade-in">
+                    <a className="text-gray-500 no-underline hover:no-underline" href="/">&copy; DevBlog 2024</a>
+                </div>
+                <div className="flex items-center w-full text-sm  fade-in text-gray-500 no-underline ">
+                    Made with&nbsp;<svg className="hover:scale-150 hover:duration-200" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="#d20f0f" fill-rule="evenodd" d="M12 20c-2.205-.48-9-4.24-9-11a5 5 0 0 1 9-3a5 5 0 0 1 9 3c0 6.76-6.795 10.52-9 11"/></svg>&nbsp;by&nbsp;  
+                    <button 
+                        onClick={()=>window.location.replace("https://github.com/chiragyadav2003")}
+                        className="text-gray-500 no-underline hover:no-underline" >
+                            @Chirag Yadav
+                        </button>
+                </div>
+            </footer>
     </div>
     )
 }
