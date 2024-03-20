@@ -87,36 +87,21 @@ export const Home = () =>{
                         }
 
                         <div className="flex flex-col w-full xl:w-2/5 justify-center lg:items-start">
-
                         </div>
-                        
-                        {/* <!--Footer--> */}
-                        {/* <footer className="flex justify-stretch items-center w-full bg-red-300 mt-20 py-10">
-                            <div className="w-full text-sm text-center fade-in">
-                                <a className="text-gray-500 no-underline hover:no-underline" href="/">&copy; DevBlog 2024</a>
-                            </div>
-                            <div className="flex w-full text-sm  fade-in text-gray-500 no-underline ">
-                                Made with&nbsp;<svg className="hover:scale-150 hover:duration-200" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="#d20f0f" fill-rule="evenodd" d="M12 20c-2.205-.48-9-4.24-9-11a5 5 0 0 1 9-3a5 5 0 0 1 9 3c0 6.76-6.795 10.52-9 11"/></svg>&nbsp;by&nbsp;  
-                                <button 
-                                    onClick={()=>window.location.replace("https://github.com/chiragyadav2003")}
-                                    className="text-gray-500 no-underline hover:no-underline" >
-                                        @Chirag Yadav
-                                    </button>
-                            </div>
-                        </footer> */}
+
                     </div>
                 </div>
                 
             </div>
-            <footer className="flex justify-stretch items-center w-full pb-10">
+            <footer className="flex justify-stretch items-center w-full pb-5 ">
                 <div className="w-full text-sm text-center fade-in">
-                    <a className="text-gray-500 no-underline hover:no-underline" href="/">&copy; DevBlog 2024</a>
+                    <a className="text-gray-500 no-underline hover:no-underline " href="/">&copy; DevBlog 2024</a>
                 </div>
                 <div className="flex items-center w-full text-sm  fade-in text-gray-500 no-underline ">
                     Made with&nbsp;<svg className="hover:scale-150 hover:duration-200" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="#d20f0f" fill-rule="evenodd" d="M12 20c-2.205-.48-9-4.24-9-11a5 5 0 0 1 9-3a5 5 0 0 1 9 3c0 6.76-6.795 10.52-9 11"/></svg>&nbsp;by&nbsp;  
                     <button 
                         onClick={()=>window.location.replace("https://github.com/chiragyadav2003")}
-                        className="text-gray-500 no-underline hover:no-underline" >
+                        className="text-gray-500 no-underline hover:no-underline hover:scale-125 hover:pl-2 hover:duration-300" >
                             @Chirag Yadav
                         </button>
                 </div>
