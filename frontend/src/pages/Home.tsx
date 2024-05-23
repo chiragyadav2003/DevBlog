@@ -93,7 +93,7 @@ export const Home = () =>{
                 </div>
                 
             </div>
-            <footer className="flex justify-stretch items-center w-full pb-5 ">
+            <footer className="fixed bottom-0 w-full flex justify-stretch items-center bg-white shadow-md pb-6">
                 <div className="w-full text-sm text-center fade-in">
                     <a className="text-gray-500 no-underline hover:no-underline " href="/">&copy; DevBlog 2024</a>
                 </div>
